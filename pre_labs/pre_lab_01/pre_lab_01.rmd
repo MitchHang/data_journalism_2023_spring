@@ -233,7 +233,7 @@ umd_courses %>%
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer:** This time, we have sorted the classes by department and have them sorted by number of classes taken, total number of seats, as well as the mean, median, minimum and maximum numbers of seats. Business and Management has the largest number of total classes and seats, a mean seat number of 85.0, a median seat number of 45, a minimum seat number of 0 and a maximum seat number of 645.
+**Answer:** This time, we have sorted the classes by department and have them sorted by number of classes taken, total number of seats, as well as the mean, median, minimum and maximum numbers of seats. Business and Management has 1,726 classes and 146,763 total seats, a mean seat number of 85.0, a median seat number of 45, a minimum seat number of 0 and a maximum seat number of 645.
 
 ### Task 15: Questions
 
