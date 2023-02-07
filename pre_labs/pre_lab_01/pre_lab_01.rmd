@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_01.Rmd"
-author: "Derek Willis"
-date: "2023-01-05"
+author: "Mitchell Hang"
+date: "2023-02-07"
 output: html_document
 ---
 
@@ -37,7 +37,9 @@ The library function loads an R library such as the tidyverse, providing access 
 
 ### Task 1: The console
 
-**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**
+**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below.
+
+**Answer:** [1] 4
 
 ### Task 2: Variables
 
@@ -55,7 +57,7 @@ number * number
 
 What does it return? Type your answer below:
 
-**Answer:**
+**Answer:** [1] 4
 
 ### Task 3: Install packages
 
@@ -93,7 +95,7 @@ umd_courses <- read_rds("umd_courses.rds")
 
 Once it loads, look at the environment window at right in RStudio for umd_courses It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer**
+**Answer:** 55,632 observations (rows/records), 7 variables (columns/fields)
 
 ### Task 6: Glimpse data
 
@@ -103,8 +105,9 @@ Once it loads, look at the environment window at right in RStudio for umd_course
 glimpse(umd_courses)
 ```
 
-In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). 
-**Answer**
+In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>).
+
+**Answer:** id is <chr>, seats is <dbl>
 
 ### Task 7: Examine data "head"
 
@@ -114,8 +117,9 @@ In the space below, write the data type for the "id" column and the "seats" colu
 head(umd_courses)
 ```
 
-In the space below, write the name of the business from the first row of the "name" column. 
-**Answer**
+In the space below, write the name of the business from the first row of the "title" column. 
+
+**Answer:** Directed Research
 
 ### Task 8: Explore data with interactive dataframe
 
@@ -135,7 +139,7 @@ umd_courses %>%
 
 Describe what you think each line of this code is doing below, based on the result:
 
-**Answer**
+**Answer:** I think these lines of codes are compiling all of the UMD courses taken thus far, sorting them by which term (or semester) they were taken and then counting the number of courses taken during those terms, in chronological order.
 
 ### Task 10: Adding arrange to sort the data
 
@@ -151,7 +155,8 @@ umd_courses %>%
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? 
-**Answer**
+
+**Answer:** This time, the terms are sorted by the number of classes students have taken at that time, with the August 2022 term having the most at 4,975 classes.
 
 ### Task 11: Grouping by multiple columns
 
@@ -168,7 +173,7 @@ umd_courses %>%
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
 
-**Answer**
+**Answer:** This time, the number of classes taken for each term are split by their departments, starting with the December 2017 term.
 
 ### Task 12: Other summary functions
 
@@ -185,9 +190,10 @@ umd_courses %>%
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? 
-**Answer**
 
-### Task 13: different kinds of summarizations
+**Answer:** This time, the terms are sorted both by the number of classes students have taken at that time and the total number of seats, with the August 2022 term having the most at 4,975 classes and 230,796 seats.
+
+### Task 13: Different kinds of summarizations
 
 **Task** Run the following codeblock to group the umd_courses dataframe by term. Then do the following summarizations for each term: count the number of courses, add up the total of all seats, and calculate the mean and median contribution number of seats. Then sort so the term with the most total seats is listed first.
 
@@ -203,10 +209,11 @@ umd_courses %>%
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? 
-**Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common?
 
-### Task 14: more aggregations
+**Answer:** This time, in addition to the terms being sorted both by the number of classes students have taken at that time and the total number of seats, we also have the mean and median number of seats for those terms. The August 2022 term, which has 4,975 classes and 230,796 seats, has a mean seat number of 46.4 and an average median seat number of 22.
+
+### Task 14: More aggregations
 
 **Task** Run the following codeblock to group the umd_courses dataframe by the department. Then do the following summarizations for each group: count the number of courses, add up the total of all seats, calculate the mean and median number of seats and calculate the smallest and largest seat numbers. Then sort so the department with the largest total number of seats is listed first.
 
@@ -226,16 +233,16 @@ umd_courses %>%
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer**
+**Answer:** This time, we have sorted the classes by department and have them sorted by number of classes taken, total number of seats, as well as the mean, median, minimum and maximum numbers of seats. Business and Management has the largest number of total classes and seats, a mean seat number of 85.0, a median seat number of 45, a minimum seat number of 0 and a maximum seat number of 645.
 
-### Task 12: Questions
+### Task 15: Questions
 
 No code here; I want you to provide three questions that this data suggests to you. What would you like to ask it?
 
-**Answer**
+**Answer:**
 
-1.  
+1.  How many students have taken classes in the Computer Science department during the August 2022 term?
 
-2.  
+2.  What was the average number of seats for a class offered during the January 2021 term?
 
-3.  
+3.  What was the maximum number of seats offered by any class from the Linguistics department during any term?
