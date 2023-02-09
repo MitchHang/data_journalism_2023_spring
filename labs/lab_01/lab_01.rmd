@@ -78,7 +78,7 @@ umd_courses %>%
 ```
 
 **Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know _how_ to accomplish this; I want you to describe in words what would make the answer easier to see.
-**A4** I think it would have been easier if many of the instructors' names were filled in the fields, as I saw a bunch of fields filled with N/A as well as "Instructor: TBA." If there was more than one instructor teaching a class, they would occupy the same field but would be separated with a semicolon. In this case, there should have been more fields to separate each instructor so that they can be individually gathered from the dataset.
+**A4** I think it would have been easier if many of the instructors' names were filled in the fields, as I saw a bunch of fields filled with N/A as well as "Instructor: TBA." If there was more than one instructor teaching a class, they would occupy the same field but would be separated with a semicolon. In this case, there should have been more fields to separate each instructor so that they can be individually gathered from the dataset. Also, there is a scenario where an instructor may be teaching in one department, so I could just simply group by instructor to get an alternative answer.
 
 **Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting?
 
