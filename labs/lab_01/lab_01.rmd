@@ -1,7 +1,7 @@
 ---
 title: "lab_01"
-author: "Derek Willis"
-date: "2023-01-05"
+author: "Mitchell Hang"
+date: "2023-02-09"
 output: html_document
 ---
 
@@ -40,28 +40,56 @@ umd_courses <- read_rds("lab_01.rds")
 ## Answer questions
 
 **Q1** Which department has the highest mean (average) number of seats for its classes? You need to show the department with the highest average first.
-**A1** 
+**A1** The "Engineering, Cooperative Education" department has the highest mean number of seats for its classes, with roughly 314 seats per class. 
 
 ```{r}
+umd_courses %>%
+  group_by(department) %>%
+  summarize(
+    count_classes = n(),
+    total_seats = sum(seats),
+    mean_seats = mean(seats)
+  ) %>%
+  arrange(desc(mean_seats))
 ```
 
 **Q2** Find out the greatest number of times any individual class has been offered in our dataset. You must show the greatest number of classes first.
-**A2** 
+**A2** The greatest number of times any individual class has been offered in our dataset is 21 times.
 
 ```{r}
+umd_courses %>%
+  group_by(id, title, department) %>%
+  summarize(
+    count_times = n()
+  ) %>%
+  arrange(desc(count_times))
 ```
 
 **Q3** Count the number of courses for each instructor and department. Which instructor has taught the most? 
-**A3** 
+**A3** The first name of an instructor I found who has taught the most is Keith Yearwood, who has taught 58 courses in the "Geographical Sciences" department.
 
 ```{r}
+umd_courses %>%
+  group_by(instructors, department) %>%
+  summarize(
+    count_courses= n()
+  ) %>%
+  arrange(desc(count_courses))
 ```
 
 **Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know _how_ to accomplish this; I want you to describe in words what would make the answer easier to see.
-**A4**
+**A4** I think it would have been easier if many of the instructors' names were filled in the fields, as I saw a bunch of fields filled with N/A as well as "Instructor: TBA." If there was more than one instructor teaching a class, they would occupy the same field but would be separated with a semicolon. In this case, there should have been more fields to separate each instructor so that they can be individually gathered from the dataset.
 
 **Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting?
-**A5**
+
+What was the average number of seats for a class offered during the January 2021 term?
+
+**A5** The average number of seats for a class offered during the January 2021 term was roughly 46 seats. I thought the answer was pretty interesting as it was relatively consistent with the other average number of seats for a class offered in any other term (particularly in August and January).
 
 ```{r}
+umd_courses %>%
+  group_by(term) %>%
+  summarize(
+    mean_seats = mean(seats)
+  )
 ```
