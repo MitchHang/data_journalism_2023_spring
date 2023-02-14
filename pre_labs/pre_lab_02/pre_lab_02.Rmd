@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_02.Rmd"
-author: "Derek Willis"
-date: "2023-01-06"
+author: "Mitchell Hang"
+date: "2023-02-14"
 output: html_document
 ---
 
@@ -24,6 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 options(scipen=999)
 library(tidyverse)
 library(lubridate) # look up lubridate and describe its uses in your reference notebook
+# Lubridate is an R package that makes it easier to work with dates and times.
 ```
 
 ### Task 2: Load data
@@ -91,7 +92,7 @@ And now we only have two columns of data for whatever analysis we might want to 
 
 Notice that we made a new variable to hold the result. Why is that important?
 
-**Answer**
+**Answer** This variable is to differentiate from the previous journalism_courses variable we created a while back so we don't overwrite it.
 
 ### Task 6: Combining filters
 
@@ -125,7 +126,7 @@ and_theatre_seats_15 <- umd_courses %>% filter(department == "Theatre" | seats >
 nrow(and_theatre_seats_15)
 ```
 
-**Answer**
+**Answer** [1] 37480
 
 When it comes to filters, OR is additive; AND is restrictive.
 
@@ -143,6 +144,16 @@ umd_courses %>%
 The latest version of the tidyverse also has a function called `str_like` which uses the wildcard search operator % to do partial matching.
 
 A general tip about using filter: it's easier to work your way towards the filter syntax you need rather than try and write it once and trust the result. Each time you modify your filter, check the results to see if they make sense. This adds a little time to your process but you'll thank yourself for doing it because it helps avoid mistakes. Note that whatever you're trying to match using `filter` - whether an exact match or a partial one - R is case-sensitive by default. Go back and try the previous block, changing the pattern to "shakespeare" to see this.
+
+```{r}
+umd_courses %>% 
+  filter(str_detect(instructors, "Keith Yearwood"))
+```
+
+```{r}
+umd_courses %>% 
+  filter(str_detect(title, "^Shakespeare"))
+```
 
 ## Dates
 
@@ -168,7 +179,7 @@ maryland_expenses <- maryland_expenses %>% mutate(expenditure_date=mdy(expenditu
 head(maryland_expenses)
 ```
 
-**Answer:**
+**Answer:** The expenditure_date column has changed its formatting from MM/DD/YY to YYYY-MM-DD, and it has changed from <chr> to <date>.
 
 Lubridate has functions for basically any type of character date format: mdy, ymd, even datetimes like ymd_hms.
 
@@ -204,7 +215,7 @@ So the month of June 2022 had the most expenditures by far in this data.
 
 Describe the values in the new `month` column - what do you think is going on there?
 
-**Answer**
+**Answer** I think the total amounts are declared for the first of the month, and the values are not necessarily sorted chronologically (newest or oldest month first), but rather by their corresponding total amount. I'm guessing the "-01" at the end is a placeholder representing the entire month.
 
 ### Task 10: Mutate
 
@@ -234,7 +245,7 @@ general_22 <- general_22 %>%
 
 Describe what you think this code is doing below.
 
-**Answer**
+**Answer** I think the code is calculating what percentage of the votes Wes Moore got out of all votes for the candidates (and write-ins) combined.
 
 ### Task 11: Better percentage calculation
 
@@ -263,7 +274,7 @@ general_22 <- general_22 %>%
 
 How did the answer change from the previous task, and why?
 
-**Answer**
+**Answer** It sorts the counties in which Wes Moore got the highest percentage of total votes in descending order.
 
 ### Task 13: Mutate with ordering, part 2
 
@@ -277,7 +288,7 @@ general_22 %>%
 
 Is this a more interesting or useful answer? Why?
 
-**Answer**
+**Answer** I would say maybe not, because you're comparing the performance of Wes Moore in smaller counties (such as Somerset) compared to larger counties (such as Prince George's).
 
 ### Task 14: Standardize existing data using mutate
 
@@ -305,7 +316,7 @@ standardized_maryland_expenses <- maryland_expenses %>%
 
 **Task** Search the Internet for tidyverse functions similar to str_to_upper. Name at least two and describe what they do. If you use ChatGPT for this, include the question you submitted.
 
-**Answer**
+**Answer** str_to_lower() converts to lower case ("bank of america"), and str_to_title() converts to title case ("Bank of America").
 
 There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
 
@@ -315,7 +326,7 @@ Mutate is even more useful when combined with some additional functions. Let's k
 
 **Task** Run the following code and look at the output. Then write a sentence or two describing what you think the mutate statement is doing step by step.
 
-**Answer**
+**Answer** I think the mutate statement is analyzing the name of a state in the address field, then creating a new column and adding the abbreviation for the state. Otherwise, it would put N/A in the field for everything else.
 
 ```{r}
 maryland_expenses_with_state <- maryland_expenses %>%
@@ -350,7 +361,7 @@ maryland_expenses_with_state %>%
 
 Does this answer make sense to you? Why or why not?
 
-**Answer**
+**Answer** I think this answer does make sense because it is simply gathering all of the total payments made for other states and putting them in a simple two-column tibble. 
 
 Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
 
@@ -360,8 +371,8 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 **Answer**
 
-1. 
+1. What was the total payment amount for the District of Columbia (DC)?
 
-2.  
+2. What was the percentage of total votes that Dan Cox attained in each county? How many counties did he recieve the majority vote?
 
-3.  
+3. What was the total amount of payments made towards Bank of America for the month of June 2022?
