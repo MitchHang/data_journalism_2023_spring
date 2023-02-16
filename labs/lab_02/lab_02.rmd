@@ -1,7 +1,7 @@
 ---
 title: "lab_02"
-author: "derek willis"
-date: "2023-01-07"
+author: "Mitchell Hang"
+date: "2023-02-16"
 output: html_document
 ---
 
@@ -34,28 +34,67 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 **Q1** Create a new column that divides the expense amounts into the following categories - \$0-\$500, \$500-\$5000, \$5001-\$50000, \$50001\_\$100000, \$100001-\$500000 - giving each an appropriate text value, and count how many expenses are in each group. How would you describe the distribution of expenses in a sentence? Would you change the categories?
 
-**A1.**
+**A1.** I would say that this distribution of expenses is quite uneven, as the intervals of values (i.e., difference between highest and lowest amount) are inconsistent, so I would've re-written my categories so that they have even intervals. The categories cap off at \$500,000, so I would also added another category for expense amounts greater than \$500,000. Otherwise, I would have fixed the second category so that it reads \$501-\$5000.
 
 ```{r}
+maryland_expenses_new <- maryland_expenses %>%
+  mutate(
+    interval = case_when(
+      
+      amount <= 500 ~ "$0-$500",
+      amount <= 5000 ~ "$500-$5000",
+      amount <= 50000 ~ "$5001-$50000",
+      amount <= 100000 ~ "$50001-$100000",
+      amount <= 500000 ~ "$100001-$500000"
+      
+    )
+  )
 ```
 
 **Q2.** How many departments have offered the courses with "Climate" in the title and at least one seat? Which department has offered the most? 
-**A2.** 
+**A2.** 26 departments have offered courses with "Climate" in the title and at least one seat, with the Atmospheric and Oceanic Science department offering the most classes (65).
 
 ```{r}
+umd_courses %>% 
+  group_by(department) %>%
+  filter(str_detect(title, "limate"), seats >= 1) %>%
+  summarize(
+    count_courses = n()
+  ) %>%
+  arrange(desc(count_courses))
 ```
 
 **Q3.** Of the departments listed in A2, which one is the most interesting to you, and why?
-**A3.** 
+**A3.** I think the Mechanical Engineering department was the most interesting because it had a considerable number of courses, and I never thought there was much of a technical aspect for climate control involving mechanics. I had always thought much of the process was involved on a legislative level, with governments imposing acts aimed to slow down climate change.
 
 **Q4.** Using the Maryland campaign expenses data, change the datatype of the expenditure_date column so that it is a date and not a chr. Then create a new column for the month based on expenditure_date. Then write code that shows total amount spent each month by Wes Moore's committee (you'll need to search the data to find the exact name). Write a sentence describing the pattern of spending over time.
-**A4.**
+**A4.** Wes Moore's committee spent more money in the months leading up to the 2022 Maryland gubernatorial election in November, with October of 2022 being the month when the committee spent the most amount of money, and May of 2021 being the month when it spent the least amount of money (likely when Wes's campaign for Governor started).
 
 ```{r}
+maryland_expenses_date <- maryland_expenses %>%
+  mutate(
+    expenditure_date=mdy(expenditure_date), 
+    month = floor_date(expenditure_date, "month")
+  ) 
+
+maryland_expenses_date %>%
+  filter(str_detect(committee_name, "Moore  Wes For Maryland")) %>%
+  group_by(month) %>%
+  summarise(total_amount = sum(amount)) %>%
+  arrange(desc(total_amount))
 ```
 
 **Q5.** Choose your own adventure: using either the UMD courses or campaign expenses data, ask and answer a question that is different than the previous ones. You can use one of the ones you provided in the pre_lab.
-**A5.** 
+
+What was the total amount of payments made towards Bank of America for the month of June 2022?
+
+**A5.** Bank of America was paid a total of $1,587.76 during the month of June 2022.
 
 ```{r}
+maryland_expenses_date %>%
+  mutate(payee_upper = str_to_upper(payee_name)) %>%
+  filter(str_detect(payee_upper, "BANK OF AMERICA")) %>%
+  group_by(month) %>%
+  summarise(total_amount = sum(amount)) %>%
+  arrange(desc(total_amount))
 ```
