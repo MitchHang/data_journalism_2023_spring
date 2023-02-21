@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_03.Rmd"
-author: "Derek Willis"
-date: "2023-01-09"
+author: "Mitchell Hang"
+date: "2023-02-21"
 output: html_document
 ---
 
@@ -33,7 +33,9 @@ library(tidyverse)
 
 ### Task 2: Load data
 
-**Task** Load some [Maryland state government payments data](https://opendata.maryland.gov/Budget/State-of-Maryland-Payments-Data-FY2008-to-FY2023/7syw-q4cy) by running the following code. We'll use the guess_max() function as an argument to use the first 10 rows to set the data type. What does the first line of the red Warning message that prints out when you load the data say? What happens when you follow its instructions? Answer below. **Answer**
+**Task** Load some [Maryland state government payments data](https://opendata.maryland.gov/Budget/State-of-Maryland-Payments-Data-FY2008-to-FY2023/7syw-q4cy) by running the following code. We'll use the guess_max() function as an argument to use the first 10 rows to set the data type. What does the first line of the red Warning message that prints out when you load the data say? What happens when you follow its instructions? Answer below. **Answer** "One or more parsing issues, call `problems()` on your data frame for details, e.g.:
+  dat <- vroom(...)
+  problems(dat)"
 
 ```{r}
 payments <- read_csv("data/State_of_Maryland_Payments_Data__FY2008_to_FY2023.csv", guess_max=10)
@@ -41,7 +43,8 @@ payments <- read_csv("data/State_of_Maryland_Payments_Data__FY2008_to_FY2023.csv
 
 ### Task 3: Reload data
 
-**Task** Run the following codeblock to reload the data, using every row to set the data types. Does it show any parsing errors when you run? Answer below **Answer**
+**Task** Run the following codeblock to reload the data, using every row to set the data types. Does it show any parsing errors when you run? Answer below.
+**Answer** There seem to be no parsing errors now.
 
 ```{r}
 payments <- read_csv("data/State_of_Maryland_Payments_Data__FY2008_to_FY2023.csv", guess_max=322138)
@@ -49,7 +52,8 @@ payments <- read_csv("data/State_of_Maryland_Payments_Data__FY2008_to_FY2023.csv
 
 ### Task 4: Examine the data with glimpse
 
-**Task** Run the following codeblock to glimpse the data. What data type is the "Vendor Name" field? What data type is the "Amount" field? What data type is the "Date" column? Answer below. **Answer**
+**Task** Run the following codeblock to glimpse the data. What data type is the "Vendor Name" field? What data type is the "Amount" field? What data type is the "Date" column? Answer below. 
+**Answer** "Date" is a character (<chr>) type.
 
 ```{r}
 glimpse(payments)
@@ -64,7 +68,7 @@ The second smell we can find in code is **wrong spatial data**. Spatial data mea
 We can check to see if any of the zip codes are less than five characters by using [a function called `str_length`](https://stringr.tidyverse.org/reference/str_length.html) inside a filter.
 
 **Task** Run the following codeblock to group by the vendor's zip code and show any that are less than five characters in length. How many zip codes do not have five characters? What do you think is happening with this data? 
-**Answer**
+**Answer** It says that 547 zip codes do not have five characters, although I do think the codeblock is taking the zip codes and treating them as integers, since "2241" appears the most in the dataset when it should be formatted as "02241" instead.
 
 ```{r}
 payments %>%
@@ -90,7 +94,8 @@ Each row represents a recipient of state grant or loan, along with information a
 
 ### Task 7: Count the number of payments in each category by year:
 
-**Task** Run the following codeblock to count the number of payments. Looking at the result, what jumps out at you as potentially problematic? **Answer**
+**Task** Run the following codeblock to count the number of payments. Looking at the result, what jumps out at you as potentially problematic?
+**Answer** Some of the rows do not have their category (i.e., Loan or Grant) mentioned, plus one category is listed as "L."
 
 ```{r}
 md_grants_loans %>% 
@@ -104,7 +109,7 @@ Any time you are going to focus on a column for analysis, you should check for u
 ### Task 8: Find outliers
 
 **Task** Run the following code to arrange the grants & loan data so that the smallest amount is first. Describe what you see. 
-**Answer**
+**Answer** A majority of the data is comprised of grants, and there don't seem to be any blank fields from the dataset. However, the capitalization for the grantees are inconsistent, with some being in capitalized case, others being in all caps and some being a hybrid of the two.
 
 ```{r}
 md_grants_loans %>% 
@@ -140,7 +145,8 @@ Let's get cleaning. Our goal will be to build up one block of code that does all
 
 ### Task 3: Use clean_names()
 
-**Task** Run the following codeblock to use the `clean_names()` function from janitor to standardize column names. How does the function change the headers? Answer below. **Answer**
+**Task** Run the following codeblock to use the `clean_names()` function from janitor to standardize column names. How does the function change the headers? Answer below. 
+**Answer** The headers in the dataset now become lowercase, and spaces between words have been replaced with underscores.
 
 ```{r}
 # cleaning function
@@ -184,7 +190,8 @@ cleaned_md_grants_loans
 
 ### Task 6: Check for duplicate rows
 
-**Task** Run the following codeblock to check for duplicate rows using get_dupes(). How many duplicates are possible? **Answer**
+**Task** Run the following codeblock to check for duplicate rows using get_dupes(). How many duplicates are possible? 
+**Answer** 50 duplicates are possible, according to the dataset.
 
 ```{r}
 cleaned_md_grants_loans %>%
@@ -193,7 +200,8 @@ cleaned_md_grants_loans %>%
 
 ### Task 7: Get rid of duplicate rows
 
-**Task** Run the following codeblock to use distinct() to get rid of duplicate rows. How many rows does the new dataframe have? Answer below. **Answer**
+**Task** Run the following codeblock to use distinct() to get rid of duplicate rows. How many rows does the new dataframe have? Answer below. 
+**Answer** The new dataframe has 17,740 rows.
 
 ```{r}
 # cleaning function
@@ -215,7 +223,8 @@ Let's start by cleaning up the zip field. Remember, some of the rows had a five-
 
 We're going to write code that tells R to make a new column for our zips, keeping the first five digits on the left, and get rid of anything after that by using `mutate()` in concert with `str_sub()`, from the `stringr` package.
 
-**Task** Run the following codeblock to use str_sub() to convert the ZIP codes that have nine digits to five digits, creating a new column. Look at the difference in the result - what changed? **Answer**
+**Task** Run the following codeblock to use str_sub() to convert the ZIP codes that have nine digits to five digits, creating a new column. Look at the difference in the result - what changed? 
+**Answer** Another column titled "zip5" was added that takes the nine-digit ZIP codes found in the dataset and writes the first five digits from them; the original nine-digit ZIP codes are kept along with the others in the "zip_code" column.
 
 ```{r}
 # cleaning function
@@ -278,8 +287,25 @@ cleaned_md_grants_loans
 
 ### Task 11: Answer our question!
 
-**Task** Write and run code to answer our original question: which zip code has gotten the most amount of money from the Maryland Tourism Board?
+**Task** Write and run code to answer our original question: Which zip code has gotten the most amount of money from the Maryland Tourism Board?
+**Answer** The ZIP code 21202	has received the most amount of money from the Maryland Tourism Board (worth $8,464,101.00).	
 
 ```{r}
+cleaned_md_grants_loans <- md_grants_loans %>%
+  clean_names() %>% 
+  rename(source = grantor) %>% 
+  mutate(source = str_to_upper(source), grantee = str_to_upper(grantee), description = str_to_upper(description)) %>% 
+  distinct() %>%
+  mutate(zip5 = str_sub(zip_code, start=1L, end=5L)) %>%
+  mutate(zip5 = case_when(
+    zip5 == "Vario" ~ as.character(NA),
+    str_detect(zip5, "^UB7") ~ as.character(NA),
+    TRUE ~ zip5
+  ))
 
+cleaned_md_grants_loans %>%
+  filter(str_detect(source, "MARYLAND TOURISM BOARD")) %>%
+  group_by(zip5) %>%
+  summarize(total_amount = sum(amount)) %>%
+  arrange(desc(total_amount))
 ```
