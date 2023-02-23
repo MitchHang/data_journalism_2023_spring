@@ -65,7 +65,7 @@ A3. "WHITING TURNER CONTRACTING CO" looks similar to "WHITING TURNER CONTRACTING
 ```{r}
 cleaned_payments %>%
   filter(str_detect(agency_name, "CAPITAL PROJECTS- UNIVERSITY OF MARYLAND")) %>%
-  group_by(vendor_zip, vendor_name) %>%
+  group_by(vendor_name, vendor_zip) %>%
   summarize(total_amount = sum(amount)) %>%
   arrange(desc(total_amount))
 ```
