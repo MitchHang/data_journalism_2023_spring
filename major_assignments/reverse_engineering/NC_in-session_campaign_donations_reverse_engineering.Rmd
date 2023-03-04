@@ -1,0 +1,123 @@
+---
+title: "Reverse Engineering Project (North Carolina In-Session Campaign Donations)"
+author: "Hang, Mitchell; Janik, Olivia"
+date: "2023-03-04"
+output:
+  html_document:
+    theme: cerulean
+    highlight: pygments
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction 
+
+In this notebook, we are reverse engineering the story, "CEOs gave heavily during legislative session, exposing loophole in NC's fundraising ban" (https://www.wral.com/in-session-campaign-donations/17716104/).
+
+## Load libraries
+
+Loading required libraries for this analysis.
+
+```{r echo=FALSE, message=FALSE}
+options(scipen=999)
+library(tidyverse)
+library(lubridate)
+library(janitor)
+```
+
+## Load and Cleaning Data
+
+In this section, describe the source of the data, write a basic data dictionary for data you are working with, and discuss any caveats or issues you discovered working with this data. 
+
+```{r}
+# Load required data
+
+# Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
+
+# Clean required data and prepare for analysis if needed. 
+
+NC_donors <- read_csv("data/donors0103-0701.csv")
+
+cleaned_NC_donors <- NC_donors %>%
+  mutate(date=mdy(date)) %>%
+  mutate(zip5 = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(zip5 = case_when(
+    zip5 == "Vario" ~ as.character(NA),
+    zip5 == "UB7 O" ~ as.character(NA),
+    zip5 == "UB7 " ~ as.character(NA),
+    TRUE ~ zip5
+  ))
+
+cleaned_NC_donors
+```
+
+## Sentences to Engineer
+In this notebook, we are reverse engineering five sentences from the story.
+
+### Sentence 1
+
+* **Sentence text**: “This year's legislative session also saw significant donations from hog farmers and beer distributors, both industries with important legislation before the General Assembly. Senate President Pro Tem Phil Berger's campaign alone raised nearly \$222,000 during session. Twenty-three people gave him the maximum allowed: \$5,200.”
+* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+
+```{r}
+# Put code to reverse engineer sentence here
+
+# Display results of code below this codeblock
+
+```
+
+### Sentence 2
+
+* **Sentence text**: “Add in donations to the two main political parties and to a handful of other large fundraising vehicles for state legislative races, and the in-session giving topped \$3.4 million. Gov. Roy Cooper's main campaign account brought in another \$407,000 during session.”
+* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+
+```{r}
+# Put code to reverse engineer sentence here
+
+# Display results of code below this codeblock
+
+```
+
+### Sentence 3
+
+* **Sentence text**: “There was a major bump during the first week of session this year for the state parties, but that's because three large donors – LinkedIn co-founder Reid Hoffman, Durham investor Greg Lindberg and Lindberg's Eli Research company – donated \$1.3 million that week to the state Republican and Democrat parties.”
+* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+
+```{r}
+# Put code to reverse engineer sentence here
+
+# Display results of code below this codeblock
+
+```
+
+### Sentence 4
+
+* **Sentence text**: “This year, 18 of the top 20 donors to legislators during the week before session were PACs. The other two were Strobel and Delmer.”
+* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+
+```{r}
+# Put code to reverse engineer sentence here
+
+# Display results of code below this codeblock
+
+```
+
+### Sentence 5
+
+* **Sentence text**: “Scott Prestage, with Prestage Farms, gave Moore's campaign \$5,200 right at the end of session, after the General Assembly passed legislation meant to make lawsuits against hog farms harder to win. Going back to the beginning of the year, people connected to Prestage Farms gave Moore \$31,000 in campaign donations. Half are dated two-and-a-half months before the session began. The rest came in the session's closing days or the day after the session ended.”
+* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+
+```{r}
+# Put code to reverse engineer sentence here
+
+# Display results of code below this codeblock
+
+```
+
+-30-
