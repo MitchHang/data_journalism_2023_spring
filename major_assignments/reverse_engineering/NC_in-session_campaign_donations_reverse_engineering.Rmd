@@ -97,7 +97,7 @@ cleaned_NC_donors %>%
 ### Sentence 3
 
 * **Sentence text**: “There was a major bump during the first week of session this year for the state parties, but that's because three large donors – LinkedIn co-founder Reid Hoffman, Durham investor Greg Lindberg and Lindberg's Eli Research company – donated \$1.3 million that week to the state Republican and Democrat parties.”
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: We gathered the party donations during the first week of session in 2018 (May 16th to 23rd) and the total amount that we calculated from the three names "GREG LINDBERG, "REID GARRETT HOFFMAN" and "ELI RESEARCH LLC" was \$1,250,000. So the total amount during that week wasn't necessarily \$1.3 million, but we guess many publications prefer rounding up to the nearest tenth decimal when using figures like these.
 
 ```{r}
 # Put code to reverse engineer sentence here
