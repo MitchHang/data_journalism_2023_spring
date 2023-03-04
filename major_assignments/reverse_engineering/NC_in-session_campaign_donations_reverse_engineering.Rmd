@@ -46,6 +46,7 @@ NC_donors <- read_csv("data/donors0103-0701.csv")
 
 cleaned_NC_donors <- NC_donors %>%
   mutate(date=mdy(date)) %>%
+  mutate(amount=parse_number(amount)) %>%
   mutate(zip5 = str_sub(zip, start=1L, end=5L)) %>%
   mutate(zip5 = case_when(
     zip5 == "Vario" ~ as.character(NA),
@@ -62,7 +63,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: “This year's legislative session also saw significant donations from hog farmers and beer distributors, both industries with important legislation before the General Assembly. Senate President Pro Tem Phil Berger's campaign alone raised nearly \$222,000 during session. Twenty-three people gave him the maximum allowed: \$5,200.”
+* **Sentence text**: “Senate President Pro Tem Phil Berger's campaign alone raised nearly \$222,000 during session. Twenty-three people gave him the maximum allowed: \$5,200.”
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -110,7 +111,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 5
 
-* **Sentence text**: “Scott Prestage, with Prestage Farms, gave Moore's campaign \$5,200 right at the end of session, after the General Assembly passed legislation meant to make lawsuits against hog farms harder to win. Going back to the beginning of the year, people connected to Prestage Farms gave Moore \$31,000 in campaign donations. Half are dated two-and-a-half months before the session began. The rest came in the session's closing days or the day after the session ended.”
+* **Sentence text**: “Going back to the beginning of the year, people connected to Prestage Farms gave Moore \$31,000 in campaign donations. Half are dated two-and-a-half months before the session began.”
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
