@@ -22,6 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # turn off sci notation
 options(scipen=999)
 library(tidyverse)
+library(janitor)
 ```
 
 ## PDF Parsing with Tabula
@@ -98,9 +99,7 @@ You can now export that extracted table to a CSV file using the "Export" button.
 ### Task 5: Export the CSV file
 
 **Task** Export the CSV file to your pre_lab_05 folder and read it into R by running the following codeblock. What problems do you see with the data? 
-**Answer** It gives the following warning:
-
-Error in clean_names(.) : could not find function "clean_names"
+**Answer** The column names look very odd, as they all begin with x followed by a series of numbers sometimes separated by an underscore.
 
 ```{r}
 fentanyl_deaths <- read_csv("tabula-Annual_2020_Drug_Intox_Report.csv") %>% clean_names()
@@ -115,9 +114,7 @@ The good news is that we have data we don't have to retype. The bad news is, we 
 ### Task 6: Load the data without headers
 
 **Task** Load the data without headers by running the codeblock below. What problems remain? 
-**Answer** The same warning from before still appears:
-
-Error in clean_names(.) : could not find function "clean_names"
+**Answer** The column names still have the x-followed-by-number naming scheme, but their lengths are much shorter.
 
 ```{r}
 fentanyl_deaths <- read_csv("tabula-Annual_2020_Drug_Intox_Report.csv", col_names = FALSE) %>% clean_names()
@@ -130,7 +127,7 @@ Ok, now we have all the data. But we need actual headers. Let's add those using 
 ### Task 7: Change the headers to real names
 
 **Task** Run the codeblock below. What else do we need to do?
-**Answer**
+**Answer** We still need to remove the periods from the names of the jurisdictions.
 
 ```{r}
 fentanyl_deaths <- read_csv("tabula-Annual_2020_Drug_Intox_Report.csv", col_names = FALSE) %>% 
