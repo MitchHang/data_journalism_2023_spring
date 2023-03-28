@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_07.Rmd"
-author: "derek willis"
-date: "2023-03-16"
+author: "Mitchell Hang"
+date: "2023-03-28"
 output: html_document
 ---
 
@@ -33,7 +33,7 @@ To use the API, you need to [an API key from the Census Bureau](https://api.cens
 **Task** Replace YOUR KEY HERE in the codeblock below with your Census API Key (leave the quotemarks).
 
 ```{r echo=FALSE}
-census_api_key("YOUR KEY HERE", install=TRUE)
+census_api_key("3ad46e027fcfceff7f5ae8867c1618c439e44f13", install=TRUE)
 ```
 
 The `install=TRUE` part saves your key for future use.
@@ -100,7 +100,8 @@ alldata <- p00 %>% inner_join(p10)
 
 And now we calculate the percent change.
 
-**Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. **Answer**
+**Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. 
+**Answer** The state with the largest percentage growth from 2000 to 2010 is Nevada, with a 35.1% increase in population.
 
 ```{r}
 alldata %>% mutate(change = ((Population2010-Population2000)/Population2000)*100) %>% arrange(desc(change))
@@ -124,7 +125,7 @@ We can measure this by median household income. That variable is `B19013_001`, s
 ### Task 5: Answer Questions with ACS Data
 
 **Task** Run the following codeblock to find the Maryland county with the highest median household income and put the answer below. 
-**Answer**
+**Answer** The Maryland county with the highest median household income is Howard County, with an estimated income of $129,549.
 
 ```{r}
 md <- get_acs(geography = "county",
@@ -142,7 +143,7 @@ What do the top counties all have in common? Lots of suburban flight from D.C an
 ### Task 6: Margins of Error
 
 **Task** Run the following codeblock to create a chart showing the margin of error for each county. The current headline isn't very descriptive of the data. What should it be?
-**Answer** 
+**Answer** The headline should be "Howard County has highest estimated median household income in all of Maryland."
 
 ```{r}
 md %>%
@@ -158,9 +159,11 @@ md %>%
 
 As you can see, some of the error bars are quite wide. Some are narrow. But if the bars overlap, it means the difference between the two counties is within the margin of error, and the differences aren't statistically significant.
 
-Is the difference between Calvert and Montgomery significant? **Answer**
+Is the difference between Calvert and Montgomery significant? 
+**Answer** Not really, Calvert County overlaps Montgomery County until the latter's left end.
 
-Is the difference between Howard and everyone else significant? **Answer**
+Is the difference between Howard and everyone else significant? 
+**Answer** Yes, Howard County is very much distant from all of the other counties on the chart.
 
 ### Task 7: Joining Multiple Years Together
 
@@ -185,7 +188,7 @@ md10 <- get_acs(geography = "county",
 What we're going to do next is a lot, but each step is simple. We're going to join the data together, so each county has one line of data. Then we're going to rename some fields that repeat. Then we're going to calculate the minimum and maximum value of the estimate using the margin of error. That'll help us later. After that, we're going to calculate a percent change and sort it by that change.
 
 **Task** Run the following codeblock to join the data, rename the population estimates and then calculate the values we need. Notice how we select *after* we do the initial calculations so we only see the columns we're interested in (and drop the ones we don't want to see). Also note how the select function has the minus sign (-) in front of some columns? That means we don't want to see them in our result. Which jurisdictions saw the largest increases in median income? Did any counties see their median incomes fall from 2010-2021? 
-**Answer**
+**Answer** The jurisdictions with the largest increases in median income include Baltimore City, Allegany County and Calvert County. None of the counties had their median incomes fall from 2010 to 2021, although Caroline County had the smallest increase in median income.
 
 ```{r}
 md10 %>%
@@ -213,7 +216,7 @@ md_high_schools <- read_csv("data/md_high_schools.csv") %>%
 The Census Bureau has Zip Code Tabulation Areas - they are mostly identical to what we know as zip codes, with some small differences. In most cases we can use them interchangeably.
 
 **Task** Let's get ZCTA household income data from the ACS using tidycensus for each zip code in `md_high_schools`. Run the following codeblock to retrieve household income data from 2019 - the latest year for which we have it for all Maryland ZCTAs - first, then join them to `md_high_schools` using the GEOID column. We'll also create min and max values and drop any rows where we don't have income estimates. What's one question we could ask of this data now that we have enrollment percentages and household income for the high school's zip code? What might make the answer harder to interpret?
-**Answer**
+**Answer** One question is "Which high school(s) with an enrollment of 100 students or more have the highest percentage of graduates? What is the median household income for their zip code?" It may be hard to determine the answer initially because the "estimate," "min," "max" and "moe" columns are somewhat unfamiliar at first, and it would be easier if they were labeled properly.
 
 ```{r}
 md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', year=2019)
@@ -223,7 +226,7 @@ md_high_schools_with_acs <- md_high_schools_with_acs %>% mutate(min=(estimate-mo
 
 
 **Task** Let's look at the average household income for high schools that have 60% or more graduates immediately enrolling in college, and then look at those with less than 40%. Write a sentence describing the results.
-**Answer**
+**Answer** The average household income for high schools that have 60% or more graduates immediately enrolling in college is roughly \$111,448.30, while the average household income for high schools with 40% or less graduates immediately enrolling in college is \$69,252.24.
 
 ```{r}
 md_high_schools_with_acs %>%
@@ -236,4 +239,4 @@ md_high_schools_with_acs %>%
 ```
 
 **Task** What is another question you could ask of this data?
-**Answer** 
+**Answer** "Which counties in Maryland have the most number of schools that have 60% or more graduates? What about 40% or less graduates? What is the average household income?"
