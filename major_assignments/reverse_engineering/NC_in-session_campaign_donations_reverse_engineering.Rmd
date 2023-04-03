@@ -142,7 +142,7 @@ NC_donors_4
 ### Sentence 5
 
 * **Sentence text**: “Going back to the beginning of the year, people connected to Prestage Farms gave Moore \$31,000 in campaign donations. Half are dated two-and-a-half months before the session began.”
-* **Analysis summary**: People associated with Prestage Farms gave Moore's committee $31,200 across six payments in 2018. Three came on March 1, 2018, which is about two and a half months before the session began. The other three donations occurred on June 30, 2018.
+* **Analysis summary**: People associated with Prestage Farms gave Moore's committee $31,200 across six payments in 2018. Three came on March 1, 2018, which is about two and a half months before the session began. One donation occurred on June 28, 2018 and the final two occurred on June 30, 2018.
 
 ```{r}
 # Put code to reverse engineer sentence here
