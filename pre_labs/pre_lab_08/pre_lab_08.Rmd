@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_08.Rmd"
-author: "Derek Willis"
-date: "2023-03-30"
+author: "Mitchell Hang"
+date: "2023-04-04"
 output: html_document
 ---
 
@@ -31,7 +31,7 @@ The dataset we'll use is 911 overdose calls from Baltimore County. Let's load it
 
 ### Task 2: Load data
 **Task** Run the following code to load the data. In the space below, indicate how many rows and columns it has.
-**Answer**
+**Answer** The dataset has four columns and 3,822 rows.
 
 ```{r}
 baltco_911_calls <- read_csv("data/baltco_911_calls.csv")
@@ -51,7 +51,7 @@ First, we'll add a month column to our dataframe using lubridate.
 
 ### Task 3: Add a month column to our 911 calls dataframe using lubridate and calculate the number of calls for each month
 **Task** Run the following code to add a month column to our dataframe using lubridate and count the number of calls for each month. In the space below, explain what each step of the code below is doing in English. Note the "label=TRUE" part in the mutate statement.
-**Answer**
+**Answer** The code is reading the entries in the "date" column, taking the month in the date and counting the number of calls that occurred in that month. I would assume "label=TRUE" lists the abbreviation for that month rather than using its number ("Jan" for January instead of "01," "Feb" for February instead of "02," etc.). Then, it shows the number of calls for each month and arranges the months in the order of highest to lowest number of calls.
 
 ```{r}
 baltco_911_calls_by_month <- baltco_911_calls %>%
@@ -69,7 +69,7 @@ With ggplot, the first thing we'll always do is draw a blank canvas that will co
 
 ### Task 4: Create an empty ggplot container
 **Task** Run the following code. Explain what you see after running the code in the space below.
-**Answer**
+**Answer** I see an empty semi-white box.
 
 ```{r}
 baltco_911_calls_by_month %>%
@@ -100,7 +100,7 @@ After we've invoked the ggplot() function, you'll notice we're using a + symbol.
 
 ### Task 5: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below.
-**Answer**
+**Answer** I now see bars of varying heights along with a labeled x-axis ("month") and a labeled y-axis ("count"). The solid grey background changes to a pattern of squares/rectangles with lines.
 
 ```{r}
 baltco_911_calls_by_month %>%
@@ -112,7 +112,7 @@ This is a very basic chart.  But it's hard to derive much meaning from this char
 
 ### Task 6: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock?
-**Answer**
+**Answer** The bars have now been rearranged from shortest to tallest, with the corresponding months labeled below them. The "month" title on the x-axis has been renamed to "reorder(month, total_calls)."
 
 ```{r}
 baltco_911_calls_by_month %>%
@@ -124,7 +124,7 @@ This is a little more useful. But the bottom is kind of a mess, with overlapping
 
 ### Task 7: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock?
-**Answer**
+**Answer** The x-axis and y-axis have been swapped, and the bars extend from left to right now. The bars are now sorted from longest to shortest (from top-down).
 
 ```{r}
 baltco_911_calls_by_month %>%
@@ -143,7 +143,7 @@ It's kind of like applying CSS to html. Here I'm changing the theme slightly to 
 
 ### Task 8: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock?
-**Answer**
+**Answer** The dark grey background behind the bars has been removed.
 
 ```{r}
 baltco_911_calls_by_month %>%
@@ -169,7 +169,8 @@ And now we'll apply the economist theme from that package with theme_economist()
 
 ### Task 10: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last version of the chart?
-**Answer**
+**Answer** The outer background is now light blue and white lines run through the middle of the bars from left to right. The x-axis and y-axis labels are slightly larger and in a darker font and there is now a darker line at the bottom where the x-axis is.
+
 ```{r}
 baltco_911_calls_by_month %>%
   ggplot() +
@@ -177,11 +178,12 @@ baltco_911_calls_by_month %>%
   coord_flip() + 
   theme_economist()
 ```
+
 Those axis titles are kind of a mess. Let's change "count" on the x axis to "total calls" and change "reorder(month,total_calls)" to "month".  And while we're at it, let's add a basic title and a source as a caption. We'll use a new function, labs(), which is short for labels.
 
 ### Task 11: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock?
-**Answer**
+**Answer** The graph now has a title, both the x-axis and y-axis have been renamed to "month" and "total calls" respectively, and there is now a caption that mentions the source of the data.
 
 ```{r}
 baltco_911_calls_by_month %>%
@@ -210,7 +212,7 @@ So, let's use the same Baltimore County data and generate a count of contributio
 ### Task 12: Create a dataframe of contributions by date
 
 **Task** Run the following code. Explain what you see after running the code in the space below. 
-**Answer**
+**Answer** The data entries are sorted by the date rather than by the number of calls, which makes it harder to find out which date has the highest and lowest number of calls at first. 
 
 ```{r}
 
@@ -229,7 +231,7 @@ We'll put the date on the x axis and total contributions on the y axis.
 
 ### Task 13: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. 
-**Answer**
+**Answer** There is now a line graph showing the number of drug overdose calls in Balimore County over a certain period of time. There is a larger congregation of calls between the 5 and 15 spots on the y-axis, meaning on average, there would be 5 to 15 drug overdose calls in Baltimore County during a given day.
 
 ```{r}
 baltco_911_calls_by_date %>%
@@ -247,7 +249,7 @@ We'll set the date_breaks to appear for every week; if we wanted every month, we
 
 ### Task 14: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. 
-**Answer**
+**Answer** There are breaks for every week on the x-axis, but the text overlaps with one another to the point where it's practically unreadable.
 
 ```{r}
 baltco_911_calls_by_date %>%
@@ -262,7 +264,8 @@ Those are a little hard to read, so we can turn them 45 degrees to remove the ov
 
 ### Task 15: Run the following code
 **Task** Run the following code. Explain what you see after running the code in the space below. 
-**Answer**
+**Answer** The labels on the x-axis are now at an angle, making them slightly more readable (although there is still some overlap).
+
 ```{r}
 baltco_911_calls_by_date %>%
   ggplot() + 
