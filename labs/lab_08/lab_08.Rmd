@@ -1,7 +1,7 @@
 ---
 title: "lab_08"
-author: "derek willis"
-date: "2023-04-03"
+author: "Mitchell Hang"
+date: "2023-04-06"
 output: html_document
 ---
 
@@ -13,6 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab. We'll be making some charts, working with dates and retrieving Census data.
 
+```{r}
+options(scipen=999)
+library(tidyverse)
+library(lubridate)
+library(ggthemes)
+library(tidycensus)
+```
+
 
 ## Load and modify data
 
@@ -22,6 +30,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 You will need to create columns for the date, week and month based on the existing `datetime` column.
 
+```{r}
+prince_georges_2022_overdoses <- read_csv("data/prince_georges_2022_overdoses.csv") 
+
+prince_georges_2022_overdoses_dates <- prince_georges_2022_overdoses %>%
+  mutate(date = date(datetime)) %>%
+  mutate(week = week(datetime)) %>%
+  mutate(month = month(datetime, label=TRUE))
+```
 
 
 ## Questions 
@@ -34,9 +50,26 @@ You will need to create columns for the date, week and month based on the existi
 
 Compare the results here to those from the pre_lab_08 bar chart - are there major differences in the months with the highest and lowest figures? Describe that below.
 
-**A1.** 
+**A1.** The results for Prince George's County appear to be the exact opposite of the results for Baltimore County. August was the month for the most calls in Baltimore County, but in Prince George's County it's the third-lowest month. December was the month for the most calls in Prince George's County, but in Baltimore County it's the second-lowest month. There is more of a congregation for considerably cooler months with the most calls in Prince George's County compared to the number of warmer months taking the consecutive top spots in Baltimore County.
 
 ```{r}
+prince_georges_2022_overdoses_by_month <- prince_georges_2022_overdoses_dates %>%
+  group_by(month) %>% 
+  summarize(total_calls = n()) %>% 
+  arrange(desc(total_calls))
+
+prince_georges_2022_overdoses_by_month %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(month,total_calls), weight=total_calls)) +
+  coord_flip() + 
+  theme_solarized() +
+  labs(
+    title="More 911 overdose calls in Prince George's County during cooler months",
+    x = "Month",
+    y = "Total calls",
+    caption = "Source: Prince George's County EMS"
+  )
+
 ```
 
 **Q2.** Let's visualize this data on a weekly basis using a line chart. As in Q1, generate a dataframe with the total number of calls for each week, and then create a line chart to show the distribution of calls over time. Your line chart must have:
@@ -47,10 +80,25 @@ Compare the results here to those from the pre_lab_08 bar chart - are there majo
 
 Describe the pattern of results; you may want to look at the data to dig into particular outliers.
 
-**A2.** 
-
+**A2.** The average weekly number of calls in Prince George's County seems to range from about 20 to 30. However, there are two interesting outliers to note: one is the number of calls reaching its highest in Week 22, and the other is the number of calls reaching its lowest by the end of the line plot, during Week 53. The latter seems very odd to me, as there are 52 weeks in a year, but looking at the dataset with the date columns it seems that Week 53 actually corresponds to December 31, 2022, so it could suggest that week 53 is the transitional week heading into the New Year. However, considering this dataset focuses on 2022, I would combine weeks 52 and 53 into one week.
 
 ```{r}
+prince_georges_2022_overdoses_by_week <- prince_georges_2022_overdoses_dates %>%
+  group_by(week) %>% 
+  summarize(total_calls = n()) %>% 
+  arrange(desc(total_calls))
+
+prince_georges_2022_overdoses_by_week %>%
+  ggplot() + 
+  geom_line(aes(x=week, y=total_calls)) + 
+  theme_solarized() +
+  labs(
+    title="911 overdose calls in Prince George's County hit weekly peak in mid-July",
+    x = "Week",
+    y = "Total calls",
+    caption = "Source: Prince George's County EMS"
+  )
+
 ```
 
 **Q3.**  A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis.  For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid. 
@@ -75,7 +123,35 @@ To answer this question, do the following:
 6. Add a label for each point that shows the zip code using geom_text() - see some examples of its use at https://ggplot2.tidyverse.org/reference/geom_text.html#ref-examples. Try to make the names as easy to read as possible by avoiding overlap.
 7. In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
 
-**A3.**  
+**A3.** I noticed more zip codes being placed lower on the y-axis as the amount of income increases, so I think this means that the zip codes in Prince George's County with higher median household incomes will have the fewest 911 overdose calls. I also noticed that there was a larger congregation of zip codes from \$62,500 to \$75,000 with varying amounts of calls, so I guess there is a higher range in the number of calls for a certain zip code with these income amounts, especially compared to fewer and higher amounts, as the range of calls becomes more smaller. I would assume the reason for this data is the prevalence (or maybe lack thereoff) of welfare programs throughout the county, as those living in a higher-class zip code are less likely to have a drug overdose reported than those in lower-class zip codes, so I could write a story about how some zip codes -- such as 20601 and 20623 -- have better welfare programs, thereby leading to a better state of living and fewer reported drug overdoses.
+
+```{r echo=FALSE}
+census_api_key("3ad46e027fcfceff7f5ae8867c1618c439e44f13")
+```
 
 ```{r}
+prince_georges_2022_overdoses_by_zip <- prince_georges_2022_overdoses_dates %>%
+  group_by(zipcode) %>% 
+  summarize(total_calls = n()) %>% 
+  arrange(desc(total_calls))
+
+md_zipcodes <- get_acs(geography = "zcta",
+              variables = c(medincome = "B19013_001"),
+              state = "MD",
+              year = 2019)
+
+prince_georges_2022_overdoses_acs <- prince_georges_2022_overdoses_by_zip %>% left_join(md_zipcodes, by=c('zipcode'='GEOID'))
+
+prince_georges_2022_overdoses_acs %>%
+  ggplot() + 
+  geom_point(aes(x=estimate, y=total_calls)) +
+  geom_text(aes(x=estimate, y=total_calls, label = zipcode), vjust = 0, nudge_y = 2, check_overlap = TRUE) +
+  theme_solarized() +
+  labs(
+    title="Prince George's County zip codes with higher median household incomes\nhave fewest 911 overdose calls",
+    x = "Median household income (estimate in $)",
+    y = "Total calls",
+    caption = "Source: Prince George's County EMS"
+  )
+
 ```
