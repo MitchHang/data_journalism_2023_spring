@@ -80,7 +80,7 @@ prince_georges_2022_overdoses_by_month %>%
 
 Describe the pattern of results; you may want to look at the data to dig into particular outliers.
 
-**A2.** The average weekly number of calls in Prince George's County seems to range from about 20 to 30. However, there are two interesting outliers to note: one is the number of calls reaching its highest in Week 22, and the other is the number of calls reaching its lowest by the end of the line plot, during Week 53. The latter seems very odd to me, as there are 52 weeks in a year, but looking at the dataset with the date columns it seems that Week 53 actually corresponds to December 31, 2022, so it could suggest that week 53 is the transitional week heading into the New Year. However, considering this dataset focuses on 2022, I would combine weeks 52 and 53 into one week.
+**A2.** The average weekly number of calls in Prince George's County seems to range from about 20 to 30. However, there are two interesting outliers to note: one is the number of calls reaching its highest in Week 22, and the other is the number of calls reaching its lowest by the end of the line plot, during Week 53. The latter seems very odd to me, as there are 52 weeks in a year, but looking at the dataset with the date columns it seems that Week 53 actually corresponds to December 31, 2022, so it could suggest that week 53 is the transitional week heading into the New Year. However, considering this dataset focuses solely on calls made in 2022, I would combine weeks 52 and 53 into one week.
 
 ```{r}
 prince_georges_2022_overdoses_by_week <- prince_georges_2022_overdoses_dates %>%
