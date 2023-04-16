@@ -47,6 +47,7 @@ Spotify_Youtube_clean <- Spotify_Youtube %>%
   clean_names()
 
 ```
+The Spotify and Youtube data has 20,718 observations of 28 variables. The main variables we will be working with in this data are number of streams, danceability, valence, key, and views on Youtube. After looking more closely at the data, we believe that we will be able to answer all of the questions we posed in the previous milestone.
 
 ## Questions to Analyze
 In this notebook, we are using data analysis to answer five newsworthy questions.
