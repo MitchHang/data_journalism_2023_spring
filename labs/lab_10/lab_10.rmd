@@ -86,7 +86,7 @@ Then, calculate a per capita rate of electric & hybrid vehicles using the March 
 
 Finally, make a second county map showing the per capita rate. What counties stand out on this map? How is it different from the first one you made?
 
-**A3.** Two counties on the first map surprised me: Dorchester County had the lowest percentage change even though it was past 100%, while Caroline County had the highest percentage change at 425.926%. Interestingly, there were few to no counties within the 296.826% and 403.429% range. For the second map, I was surprised to see that both Howard County and Montgomery County had the highest percentage changes, while Somerset County had the lowest percentage change.
+**A3.** Two counties on the first map surprised me: Dorchester County had the lowest percentage change even though it was past 100%, while Caroline County had the highest percentage change at 425.926%. Interestingly, there were few to no counties within the 296.826% and 403.429% range. For the second map, I was surprised to see that both Howard County and Montgomery County had the highest percentage changes at 236.873% and 206.602% respectively, while Somerset County had the lowest percentage change at 12.886%.
 
 ```{r}
 ev_2020_2023 <- read_csv("data/ev_2020_2023.csv")
