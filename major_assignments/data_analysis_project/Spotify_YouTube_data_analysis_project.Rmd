@@ -28,6 +28,8 @@ Loading required libraries for this analysis.
 library(tidyverse)
 library(lubridate)
 library(janitor)
+library(ggthemes)
+library(scales)
 ```
 
 ## Load and Cleaning Data
@@ -62,26 +64,41 @@ In this notebook, we are using data analysis to answer five newsworthy questions
 # Put code to reverse engineer sentence here
 
 Spotify_Youtube_clean_Q1 <- Spotify_Youtube_clean %>%
-  arrange(desc(stream)) %>%
-  mutate(stream_in_billions = stream/1000000000) %>%
-  slice(1:100) %>%
-  summarize(artist, track, danceability, stream, stream_in_billions)
-
-View(Spotify_Youtube_clean_Q1)
+  mutate(
+    danceability_interval = case_when(
+      danceability <= 0.1 ~ "0-0.1",
+      danceability <= 0.2 ~ "0.101-0.2",
+      danceability <= 0.3 ~ "0.201-0.3",
+      danceability <= 0.4 ~ "0.301-0.4",
+      danceability <= 0.5 ~ "0.401-0.5",
+      danceability <= 0.6 ~ "0.501-0.6",
+      danceability <= 0.7 ~ "0.601-0.7",
+      danceability <= 0.8 ~ "0.701-0.8",
+      danceability <= 0.9 ~ "0.801-0.9",
+      danceability <= 1 ~ "0.901-1"
+    )
+  ) %>%
+  group_by(danceability_interval) %>%
+  summarize(average = mean(stream)) %>%
+  mutate(average_stream_in_millions = average/1000000) %>%
+  arrange(desc(average))
 
 Spotify_Youtube_clean_Q1 %>%
- ggplot() +
-   geom_point(aes(x=danceability, y=stream_in_billions)) +
-    xlim(0, 1) +
-    theme_minimal() +
+  ggplot() +
+  geom_bar(aes(x=danceability_interval, weight=average)) +
+  theme_few () +
+  scale_fill_few("Light") +
     labs(
-    title="No apparent relationship between number of streams and song's danceability",
-    x = "Danceability",
-    y = "Number of Spotify streams (in billions)",
-    caption = "Source: Kaggle"
+    title="Songs with higher danceability score tend to have more streams",
+    x = "Danceability interval",
+    y = "average number of streams in millions",
+    caption = "source: Kaggle"
   )
+  
 
 # Display results of code below this codeblock
+  
+View(Spotify_Youtube_clean_Q1)
 
 ```
 
@@ -92,6 +109,18 @@ Spotify_Youtube_clean_Q1 %>%
 
 ```{r}
 # Put code to reverse engineer sentence here
+
+Spotify_Youtube_clean_Q2 <- Spotify_Youtube_clean %>%
+  mutate(
+    valence_interval = case_when(
+      valence <= 0.2 ~ "0-0.2",
+      0.8 >= valence ~ "0.8-1"
+    )
+  ) %>%
+  group_by(valence_interval) %>%
+  summarize(average = mean(stream)) %>%
+  mutate(average_stream_in_millions = average/1000000) %>%
+  arrange(desc(average))
 
 # Display results of code below this codeblock
 
@@ -105,6 +134,17 @@ Spotify_Youtube_clean_Q1 %>%
 ```{r}
 # Put code to reverse engineer sentence here
 
+Spotify_Youtube_clean %>%
+ ggplot() +
+   geom_point(aes(x=key, y=valence)) +
+    theme_minimal() +
+    labs(
+    title="No apparent relationship between song's key and valence",
+    x = "Key (0 is C, 1 is C#, 2 is D, etc.)",
+    y = "Valence",
+    caption = "Source: Kaggle"
+  )
+
 # Display results of code below this codeblock
 
 ```
@@ -117,7 +157,7 @@ Spotify_Youtube_clean_Q1 %>%
 ```{r}
 # Put code to reverse engineer sentence here
 
-Spotify_Youtube_clean %>%
+Spotify_Youtube_clean_Q4 <- Spotify_Youtube_clean %>%
   arrange(desc(stream)) %>%
   slice(1:100) %>%
   group_by(artist) %>%
@@ -126,23 +166,27 @@ Spotify_Youtube_clean %>%
 
 # Display results of code below this codeblock
 
+Spotify_Youtube_clean_Q4
+
 ```
 
 ### Question 5
 
-* **Question text**: Which song has the most combined Spotify streams and YouTube views (from its official video)?
-* **Analysis summary**: "Despacito" by Luis Fonsi feat. Daddy Yankee has the most combined Spotify streams and YouTube views -- not just for a collaboration -- but for any artist(s) -- with 9,586,247,629 views and streams combined (we used the higher number of views for the song for simplicity's sake. For a solo artist, the song with the most combined Spotify streams and YouTube views is "Shape of You" by Ed Sheeran, with 9,270,403,680 views and streams combined. Interestingly, "Despacito" has a higher ratio of Spotify streams to YouTube views than "Shape of You" (~5.363:1 versus ~1.757:1.)
+* **Question text**: Which song has the largest difference between Spotify streams and YouTube views (from its official video)?
+* **Analysis summary**: "Despacito" by Luis Fonsi feat. Daddy Yankee has the largest difference between Spotify streams and YouTube views, with the difference being 6,573,051,095 (we used the higher number of views for the song for simplicity's sake), nearly 2 billion more than the difference for the next song on the list: "Wheels on the Bus" by CoComelon. The official video for "Despacito" was once the most viewed YouTube video ever, so it makes sense as to why the difference between streams and views is quite high. Interestingly, "Wheels on the Bus" has a higher ratio of views to streams compared to "Despacito" (58.715:1 vs. 5.363:1 respectively), most likely because parents are playing the song through apps such as YouTube Kids so their children can listen.
 
 ```{r}
 # Put code to reverse engineer sentence here
 
-Spotify_Youtube_clean %>%
+Spotify_Youtube_clean_Q5 <- Spotify_Youtube_clean %>%
   filter(official_video = TRUE) %>%
-  mutate(views_and_streams = views + stream) %>%
-  arrange(desc(views_and_streams)) %>%
-  summarize(artist, track, views, stream, views_and_streams)
+  mutate(difference = abs(views - stream)) %>%
+  arrange(desc(difference)) %>%
+  reframe(artist, track, views, stream, difference)
 
 # Display results of code below this codeblock
+
+Spotify_Youtube_clean_Q5
 
 ```
 
