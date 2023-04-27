@@ -93,7 +93,7 @@ When you're done, rename the columns so they make sense, then make sure the date
 
 Finally, tell me what questions you could ask of this data. Be creative.
 
-**A3** One question that I could think of to ask of this data is "How many press releases from Cardin from 2021 2022 and 2023 that are focused on funding/investments have a dollar amount in the title? What were the total amounts for each year based on the press releases?" 
+**A3** One question that I could think of to ask of this data is "How many press releases from Cardin from 2021 2022 and 2023 that are focused on funding/investments have a dollar amount in the title? What were the total amounts for each year based on the press releases?" I would also consider filtering out the titles of the releases by the names of people involved, so I could keep track of the people's involvement for each year. 
 
 ```{r}
 
