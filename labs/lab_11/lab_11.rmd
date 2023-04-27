@@ -1,7 +1,7 @@
 ---
 title: "lab_11"
-author: "derek willis"
-date: "2023-04-26"
+author: "Mitchell Hang"
+date: "2023-04-27"
 output: html_document
 ---
 
@@ -17,29 +17,75 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab.
 
+```{r}
+#| output: false
+library(rvest)
+library(tidyverse)
+library(janitor)
+library(lubridate)
+```
+
 Let's get to scraping.
 
 ## Questions
 
 **Q1**. Scrape the listing of available Maryland state grants at https://grants.maryland.gov/Pages/StateGrants.aspx into a dataframe. You should have three columns, one of which is a date, so make sure the date column has a date datatype. Then, write code to count the number of grants opportunities offered by each organization listed in your dataframe, showing the organization with the most grant opportunities first. Which state agency has the most?
 
-**A1** 
+**A1** The data tells me that the organization with the most grant opportunities is the Maryland Energy Administration with a total 14 grants. However, there is another organization titled "Energy Administration" which has two more grants as well as another organization titled "MD Energy Administration" which has two more grants, so the total number of grants should be 18. The answer was somewhat difficult to determine as there are multiple organizations with more than one naming variation, so I feel that software such as OpenRefine should be used to properly rename/collate the companies.
 
 ```{r}
+
+grants_url <- "https://grants.maryland.gov/Pages/StateGrants.aspx"
+
+grants_results <- grants_url %>%
+  read_html() %>%
+  html_table() 
+
+grants_results_cleaned <- grants_results[[1]] %>%
+  clean_names() %>%
+  rename(title = grant_title) %>%
+  rename(date = due_date) %>%
+  mutate(date = mdy(date))
+
+grants_results_cleaned_q1 <- grants_results_cleaned %>%
+  group_by(organization) %>%
+  summarize(total = n()) %>%
+  arrange(desc(total))
+
+grants_results_cleaned_q1
+  
 ```
 
 **Q2** Next, let's scrape the list of press releases from Maryland's Office of the Public Defender, https://www.opd.state.md.us/press-releases. This isn't a table, so you'll need to use `html_elements()` and your browser's inspector and do some clean up on the results. The result should be a dataframe with two columns that contain the date and title, and the date column should have a date datatype. The challenge here is figuring out how to isolate the releases.
 
 When you finish scraping into a dataframe, write code to find the press releases that have the word "police" in the title. How many are there and when was the most recent one?
 
-**A2** 
+**A2** There were a total of nine press releases with the word "police" in the title since July 10, 2013. The most recent was from June 21, 2021, with the title "In Aftermath of Video Depicting Excessive Police Force, Public Defender Calls for the Implementation of Body Worn Cameras by Ocean City Police."
 
 ```{r}
+
+public_url <- "https://www.opd.state.md.us/press-releases"
+
+public_results <- public_url %>%
+  read_html() %>% 
+  html_elements('span') %>% 
+  html_text() %>% 
+  as_tibble()
+
+public_results_cleaned <- public_results %>%
+  filter(str_detect(value, "/20")) %>%
+  distinct() %>% 
+  separate(value, c('date', 'title'), sep=":") %>%
+  mutate(title = str_squish(title), date = mdy(date))
+
+public_results_cleaned_q2 <- public_results_cleaned %>%
+  filter(str_detect(title, "Police"))
+
 ```
 
 **Q3** Sen. Ben Cardin, D-Maryland, has posted hundreds of press releases at https://www.cardin.senate.gov/?post_type=press-releases. It would be great to have all of them in a dataframe that has the following columns: date, title and url.
 
-To do this, you will need to scrape the page's html and save that to a variable, and _then_ extract the dates, titles and urls into _separate_ dataframes using html_elements(). And remember how we turn a list into a dataframe. The function `html_text()` pulls out the contents of a tag, but for urls we want the HTML attribute. Rvest gives you a way to extract the URL from a link; google to find out what it is.
+To do this, you will need to scrape the page's html and save that to a variable, and _then_ extract the dates, titles and urls into _separate_ dataframes using html_elements(). And remember how we turn a list into a dataframe. The function `html_text()` pulls out the contents of a tag, but for urls we want the HTML attribute. Rvest gives you a way to extract the URL from a link; Google to find out what it is.
 
 At the end, you'll have three dataframes that you want to combine into a single dataframe. When we want to combine the rows of identical dataframes, we used `bind_rows()`. If you were combining columns instead of rows, there's a similar function. Find out what it is and use it to put all of the dataframes together into a single one.
 
@@ -47,7 +93,35 @@ When you're done, rename the columns so they make sense, then make sure the date
 
 Finally, tell me what questions you could ask of this data. Be creative.
 
-**A3** 
+**A3** One question that I could think of to ask of this data is "How many press releases from Cardin from 2021 2022 and 2023 that are focused on funding/investments have a dollar amount in the title? What were the total amounts for each year based on the press releases?" 
 
 ```{r}
+
+cardin_url <- "https://www.cardin.senate.gov/?post_type=press-releases"
+
+cardin_results <- cardin_url %>%
+  read_html()
+
+cardin_results_date <- cardin_results %>%
+  html_elements('h5') %>% 
+  html_text() %>% 
+  as_tibble() %>%
+  rename(date = value) %>%
+  mutate(date = mdy(date))
+
+cardin_results_title <- cardin_results %>%
+  html_elements('h3') %>% 
+  html_text() %>% 
+  as_tibble() %>%
+  rename(title = value) %>%
+  mutate(title = str_squish(title))
+
+cardin_results_links <- cardin_results %>%
+  html_nodes("a.customBlog_item__readMore") %>% 
+  html_attr("href") %>%
+  as_tibble() %>%
+  rename(link = value)
+
+cardin_results_cleaned <- bind_cols(cardin_results_date, cardin_results_title, cardin_results_links)
+
 ```
