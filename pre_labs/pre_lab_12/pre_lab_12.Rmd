@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_12.Rmd"
-author: "derek willis"
-date: "2023-04-28"
+author: "Mitchell Hang"
+date: "2023-05-02"
 output: html_document
 ---
 
@@ -28,6 +28,7 @@ library(tidyverse)
 library(tidytext)
 library(janitor)
 library(lubridate)
+library(rvest)
 ```
 
 Remember the end of the previous lab, where you scraped all of those press release links from Maryland Sen. Ben Cardin's website? We're going to take that one step further and analyze the actual text of those releases using tidytext. Our starting question: what words or phrases appear most in Cardin's press releases?
@@ -38,7 +39,7 @@ Let's read in this data and examine it:
 
 ### Task 2: Read in data
 **Task** Run the following code and describe the dataframe it outputs.
-**Answer**
+**Answer** It outputs a database for many of the Ben Cardin press releases with 99 rows and four columns: data, title, url and text.
 
 ```{r}
 releases <- read_rds("data/cardin_releases.rds")
@@ -86,7 +87,7 @@ If you are trying to create a list of unique words, R will treat differences in 
 
 ### Task 5: Trying out unique
 **Task** Run the following code and describe what the `unique` function does to the original list of words.
-**Answer**
+**Answer** The "unique" function takes one of each word (or punctuation) with different spelling or capitalization and removes any duplicates in the list.
 
 ```{r}
 a_list_of_words <- c("Dog", "dog", "dog", "cat", "cat", ",")
@@ -97,7 +98,7 @@ Fortunately, this is a solved problem with tidytext, which has a function called
 
 ### Task 6: Trying out unnest_tokens
 **Task** Run the following code and describe the output of using the `unnest_tokens` function.
-**Answer**
+**Answer** The "unnest_tokens" functions took each of the words from the press releases and put them in a single column data table. As you go down the column, the words can be mentally strung together to form a sentence. 
 
 ```{r}
 unique_words <- releases %>% select(text) %>%
@@ -107,7 +108,7 @@ View(unique_words)
 
 ### Task 7: Make a column chart
 **Task** Run the following code and describe what the resulting graphic shows. Is it interesting?
-**Answer**
+**Answer** The result is not really interesting, as many of the top words in the graphic are relatively common words in the English language.
 
 Now we can look at the top words in this dataset. Let's limit ourselves to making a plot of the top 25 words, and we'll use the function `count` to do the counting:
 
@@ -156,7 +157,7 @@ From there, we can get a simple word frequency by just grouping them together an
 
 ### Task 9: Using anti_join
 **Task** Run the following code and describe the results. Is it more interesting than before?
-**Answer**
+**Answer** The result is much more interesting, as many of the top words are more relevant to American policy making and local communities. 
 
 ```{r}
 unique_words %>%
@@ -193,7 +194,7 @@ Then we can create top 10 lists for both of them and compare:
 
 ### Task 11: Create dataframes with the top 10 words in each year
 **Task** Run the following code and describe the results.
-**Answer**
+**Answer** "COVID" and "health" were among the top 10 words in 2021, which makes sense considering that the pandemic was still lingering at the time. Similarly, "health" was one of the top 10 words in 2022, and the word "project" taking the top spot that year makes me believe that the state was passing legislation to improve the welfare/health care of Americans. For 2023, the top 10 words are of many varying topics, like "health," "women" and "fire."
 
 ```{r}
 unique_words_2021 %>%
@@ -238,7 +239,7 @@ So this block is is going to do the following:
 
 ### Task 12: Create a dataframe with the top 10 two-word phrases for 2021
 **Task** Run the following code and describe the results.
-**Answer**
+**Answer** "COVID-19" took the top spot for 2021, but "19 pandemic" was #3, so it makes me wonder if using a trigram is better for creating the database. The code also recognized names of various places like "Chesapeake Bay" and "Baltimore City," as well as the name "John Sarbanes."
 
 ```{r}
 releases %>%
@@ -258,7 +259,7 @@ And we already have a different, more nuanced result. Health was among the top s
 
 ### Task 13: Create a dataframe with the top 10 two-word phrases for 2022
 **Task** Run the following code and describe the results.
-**Answer**
+**Answer** "COVID-19" now takes the #4 spot for the list, so it seems it was less of a priority for Maryland policy makers that year. "Health care" did move up to the #3 position, and there are terms like "human rights" making their first appearance on the list.
 
 ```{r}
 releases %>%
@@ -278,7 +279,7 @@ And 2023?
 
 ### Task 14: Create a dataframe with the top 10 two-word phrases for 2023
 **Task** Run the following code and describe the results.
-**Answer**
+**Answer** "COVID-19" is no longer on the top 10 list, while "human rights" now takes the top spot. Similarly, "equal rights" comes close at the #2 spot. There are some more surprising terms making their first appearances on this list, particularly "oral health" and "offshore wind."
 
 ```{r}
 releases %>%
@@ -304,7 +305,7 @@ Another popular use of text analysis is to measure the sentiment of a word - whe
 
 ### Task 15: Load the bing lexicon and produce sentiments for our 2021-2023 unique words
 **Task** Run the following code and describe the results. Do any of the sentiments seem incorrect or counter-intuitive?
-**Answer**
+**Answer** Many of the sentiments seem to correspond with many of the words on the list (e.g., positive for "relief," negative for "emergency"), but some of the other words (e.g., "isolated," "limit," "fallen") appear too generalized and would need more context in order to properly determine whether they present a positive or negative (and maybe even neutral) sentiment.
 
 ```{r}
 bing <- get_sentiments("bing")
