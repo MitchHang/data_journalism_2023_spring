@@ -94,7 +94,7 @@ md_attorney_sanctions %>%
 
 **Q3.** Let's drop back down to more traditional text analysis - take the top trigram from Q2 and write code to see how many times it occurs in the text column in each fiscal year. What do you think the answer produced by your code suggests? What else could you do to try and clarify the most important reasons attorneys get sanctioned?
 
-**A3.** The fiscal year which mentions the term "attorney trust account" the most in its sanctions is 2021, with the term appearing 37 times and accounting for 19.577% of all times the term was said in the sanctions since 2011. This leads me to believe that many people had funds in their attorney trust accounts as a consequence of the COVID-19 pandemic, and one of the most common infractions for lawyers to commit is stealing escrow funds from their clients' accounts. So it is possible that many lawyers in practice were stealing funds and exploiting those who were disadvantaged (particularly families and businesses) during the pandemic.
+**A3.** The fiscal year which mentions the term "attorney trust account" the most in its sanctions is 2021, with the term appearing 37 times and accounting for 19.577% of all times the term was said in the sanctions since 2011. This leads me to believe that many people had funds in their attorney trust accounts in 2021 as a consequence of the COVID-19 pandemic, and one of the most common infractions for lawyers to commit is stealing escrow funds from their clients' accounts. So it is possible that many lawyers in practice were stealing funds and exploiting those who were disadvantaged (particularly families and businesses) during the pandemic.
 
 ```{r}
 md_attorney_sanctions %>%
