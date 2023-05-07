@@ -58,7 +58,7 @@ In this notebook, we are using data analysis to answer five newsworthy questions
 ### Question 1
 
 * **Question text**: What is the correlation between a song’s “danceability” and its number of streams?
-* **Analysis summary**: When we asked this question, our original hypothesis was that songs with high danceability would have more streams. However, after filtering the data to only show the columns we needed to answer this question and plotting the 100 most streamed songs with the number of streams and their danceability score in a scatter plot, we discovered that there is not a strong relationship between danceability and number of streams once a song hits a certain level of danceability. We think it is worth noting that the lowest danceability score in the top 100 streamed songs is 0.351, but after that there is no clear pattern.
+* **Analysis summary**: In this question we separated songs into 10 danceability intervals and coded the average mean for each interval. Through this code, we found that songs with higher danceability tend to have more streams on average. Songs with a danceability of less than 0.2 have far lower average number of streams while the danceability intervals with the most number of streams are the top 3 intervals.
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -91,11 +91,10 @@ Spotify_Youtube_clean_Q1 %>%
     labs(
     title="Songs with higher danceability score tend to have more streams",
     x = "Danceability interval",
-    y = "average number of streams in millions",
+    y = "Average number of streams (in millions)",
     caption = "source: Kaggle"
   )
   
-
 # Display results of code below this codeblock
   
 View(Spotify_Youtube_clean_Q1)
@@ -105,36 +104,39 @@ View(Spotify_Youtube_clean_Q1)
 ### Question 2
 
 * **Question text**: What mood of song gets more streams, happy songs (0.8 valence or higher) or sad songs (0.2 valence or lower)?
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: Songs with a valence of 0.8 or more (happy songs) have an average 144.9 million streams, more than songs with a valence of 0.2 or less, which have an average of 125.3 million streams. However, the valence interval with the lowest average streams is 0.4 to 0.6, songs with a medium valence.
 
 ```{r}
 # Put code to reverse engineer sentence here
 
 Spotify_Youtube_clean_Q2 <- Spotify_Youtube_clean %>%
-  mutate(
-    valence_interval = case_when(
-      valence <= 0.2 ~ "0-0.2",
-      0.8 >= valence ~ "0.8-1"
-    )
-  ) %>%
-  group_by(valence_interval) %>%
-  summarize(average = mean(stream)) %>%
-  mutate(average_stream_in_millions = average/1000000) %>%
+  mutate(stream_in_millions = (stream/1000000)) %>%
+    mutate(valence_interval = case_when(
+    valence <= 0.2 ~ "0-0.2",
+    valence <= 0.4 ~ "0.2-0.4",
+    danceability <= 0.6 ~ "0.4-0.6",
+    danceability <= 0.8 ~ "0.6-0.8",
+    danceability <= 1 ~ "0.8-1",
+    )) %>%
+   group_by(valence_interval) %>%
+  summarise(average = mean(stream_in_millions)) %>%
   arrange(desc(average))
 
 # Display results of code below this codeblock
+
+Spotify_Youtube_clean_Q2
 
 ```
 
 ### Question 3
 
 * **Question text**: What is the correlation between a song’s key and its valence? Do certain keys register positive emotions while others register negative emotions?
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: There seems to be no apparent relation between a song's key and its valance. Initially, we thought that a natural key would result in a positive emotion being registered whereas an accidental (sharp or flat) would register a negative emotion, but upon graphing the respective data points, we notice that each of the keys were filled for all possible amounts of valence from 0 to 1.
 
 ```{r}
 # Put code to reverse engineer sentence here
 
-Spotify_Youtube_clean %>%
+Spotify_Youtube_clean_Q3 <- Spotify_Youtube_clean %>%
  ggplot() +
    geom_point(aes(x=key, y=valence)) +
     theme_minimal() +
@@ -147,6 +149,7 @@ Spotify_Youtube_clean %>%
 
 # Display results of code below this codeblock
 
+Spotify_Youtube_clean_Q3
 ```
 
 ### Question 4
