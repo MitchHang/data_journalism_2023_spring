@@ -1,7 +1,7 @@
 ---
-title: "pre_lab_14.Rmd"
-author: "Derek Willis"
-date: "2023-05-02"
+title: "pre_lab_13.Rmd"
+author: "Mitchell Hang"
+date: "2023-05-09"
 output: html_document
 ---
 
@@ -44,7 +44,7 @@ Now let's load the data we'll be using. It has five fields:
 
 ### Task 2: Read in data
 **Task** Run the following code and describe the dataframe it outputs.
-**Answer**
+**Answer** It outputs the name of the states (plus D.C.), the declared 2016 presidential candidate winner/front-runner in the state, the percentage of people in the state who voted for Trump, the percentage of businesses receiving PPE in each state, and the PPE amount per employee in each state.
 ```{r}
 
 reveal_data <- read_rds("data/reveal_data.rds")
@@ -61,7 +61,7 @@ Let's start by plotting them to get a sense of the pattern.
 
 ### Task 3: Plot data
 **Task** Run the following code. Describe the plot. What do you see?
-**Answer**
+**Answer** I see a bunch of points being conglomerated in the top right corner of the plot, indicating that there is a positive relationship between the percentage of votes for Trump and the percentage of businesses receiving PPE. The trend line seems to be relatively strong with a small variance/range.
 ```{r}
 
 reveal_data %>%
@@ -76,7 +76,7 @@ Let's test another variable, the average amount of money provided by PPP per sma
 
 ### Task 4: Plot data
 **Task** Run the following code. Describe the plot. What do you see?
-**Answer**
+**Answer** The trend line seems to be relatively weaker with a larger variance/range, so it is hard to tell if there is a strong relationship between the percentage of votes for Trump and the PPE amount per employee. There is an outlier on the left-hand part of the graph, and all of the points seem to be varying all over the place.
 ```{r}
 
 reveal_data %>%
@@ -101,7 +101,7 @@ We can calculate r with a function from the corrr package called "correlate()". 
 
 ### Task 5: Correlate data
 **Task** Run the following code. Describe the table output. What do you see?
-**Answer**
+**Answer** There appears to be a stronger relationship between the percentage of votes for Trump and the percentage of businesses recieving PPE compared to the PPE amount per employee (0.522 > 0.221).
 
 ```{r}
 reveal_data %>%
@@ -119,7 +119,7 @@ The relationship between businesses in a state receiving ppe and the state's Tru
 
 ### Task 6: Correlate data
 **Task** Run the following code. Describe the model output. What do you see?
-**Answer**
+**Answer** It tries to take the data for pct_trump and businesses_receiving_ppe_pct and tries to find a correlation coefficient, which is about 0.522. The p-value calulated here is very low. 
 ```{r}
 
 cor.test(reveal_data$pct_trump, reveal_data$businesses_receiving_ppe_pct)
@@ -132,7 +132,7 @@ Now let's test the other one, the relationship between the pct_trump and the ppe
 
 ### Task 7: Correlate data
 **Task** Run the following code. Describe the model output. What do you see?
-**Answer**
+**Answer** It tries to take the data for pct_trump and businesses_receiving_ppe_pct and tries to find a correlation coefficient, which is about 0.221. While the p-value looks pretty small, it seems very high for our standards. 
 ```{r}
 
 cor.test(reveal_data$pct_trump, reveal_data$ppe_amount_per_employee)
@@ -158,7 +158,7 @@ We could just calculate the averages like we're used to doing.
 
 ### Task 8: Average data
 **Task** Run the following code. Describe the table. What do you see?
-**Answer**
+**Answer** We get the averages for the PPP amount per employee and the percentage of businesses receiving PPE corresponding to Clinton votes and Trump votes.
 ```{r}
 reveal_data %>%
   group_by(vote_2016) %>%
@@ -176,7 +176,7 @@ A t-test can help us answer that question.  It can tell us where there's a stati
 
 ### Task 9: Run t-test
 **Task** Run the following code. Describe the output. What do you see?
-**Answer**
+**Answer** The t-value is negative and somewhat low, and the p-value calculated is pretty high, so it appears that the relationship is not very meaningful.
 ```{r}
 t.test(ppe_amount_per_employee ~ vote_2016, data = reveal_data)
 ```
@@ -186,7 +186,7 @@ Let's try the percentage of businesses getting ppp loans.
 
 ### Task 10: Run t-test
 **Task** Run the following code. Describe the output. What do you see?
-**Answer**
+**Answer** The t-value is negative and pretty strong, The p-value test is pretty low, so there does appear to be a relationship between the businesses receiving PPE and the percentages of 2016 votes for both candidates. It's possible that the candidates have better access to bank loans for their campaigns.
 ```{r}
 t.test(businesses_receiving_ppe_pct ~ vote_2016, data = reveal_data)
 ```
