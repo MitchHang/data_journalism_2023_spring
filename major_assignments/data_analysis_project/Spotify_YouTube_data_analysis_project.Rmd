@@ -105,6 +105,8 @@ Spotify_Youtube_clean %>%
 #glimpse(Spotify_Youtube_clean)
 # Display results of code below this codeblock
 
+Spotify_Youtube_clean_Q1
+
 ```
 
 ### Question 2
@@ -134,6 +136,8 @@ Spotify_Youtube_clean %>%
 cor.test(Spotify_Youtube_clean$valence, Spotify_Youtube_clean$stream)
 
 # Display results of code below this codeblock
+
+Spotify_Youtube_clean_Q2
 
 ```
 
