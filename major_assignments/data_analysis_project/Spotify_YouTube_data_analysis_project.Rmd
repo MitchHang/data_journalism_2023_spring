@@ -174,13 +174,16 @@ Spotify_Youtube_clean_Q3
 
 ```{r}
 # Put code to reverse engineer sentence here
-Spotify_Youtube_clean %>%
+
+Spotify_Youtube_clean_Q4 <- Spotify_Youtube_clean %>%
   mutate(stream_in_billions = (stream/1000000000)) %>%
   group_by(artist) %>%
   summarise(average = mean(stream_in_billions)) %>%
   arrange(desc(average))
 
 # Display results of code below this codeblock
+
+Spotify_Youtube_clean_Q4
 
 ```
 
@@ -207,6 +210,6 @@ Spotify_Youtube_clean_Q5
 
 ## Concluding Analysis
 
-After finding the answers to the five questions we asked about the data, the most newsworthy finding in our opinion is the songs with the greatest difference between Spotify streams and YouTube video views. The song with the largest difference was "Despacito" by Daddy Yankee and Luis Fonsi, with a difference of 6.5 billion more YouTube views. We think this question has newsworthy findings because it shows the different ways people consume music, whether watching videos on YouTube or paying for a Spotify subscription. In our other questions we determined that there does not appear to be any relationship between a song's danceability or valence and its number of streams.In the third question, we discovered that a song's key and its valence did not have a relationship. We also determined that Post Malone is the artist with the highest average streams for his top 10 songs on Spotify with an average of 1.5 billion streams.
+After finding the answers to the five questions we asked about the data, the most newsworthy finding in our opinion is the songs with the greatest difference between Spotify streams and YouTube video views. The song with the largest difference was "Despacito" by Daddy Yankee and Luis Fonsi, with a difference of 6.5 billion more YouTube views. We think this question has newsworthy findings because it shows the different ways people consume music, whether watching videos on YouTube or listening through Spotify (with or without a paid subscription). In our other questions we determined that there does not appear to be any relationship between a song's danceability or valence and its number of streams. In the third question, we discovered that a song's key and its valence did not have a relationship. We also determined that Post Malone is the artist with the highest average streams for his top 10 songs on Spotify with an average of 1.5 billion streams. If we were doing a report on this, we could try listing the top 10 most viewed/streamed songs for each platform and try incorporating a scatterplot that compares the two statistics. We could also post timelines of how their views/streams increased for each song since they were released. One thing we could've done differently is maybe trying to find data from other services like Pandora and Tidal to see how different their most streamed songs might be.
 
 -30-
