@@ -30,11 +30,14 @@ library(lubridate)
 library(janitor)
 library(ggthemes)
 library(scales)
+library(corrr)
 ```
 
 ## Load and Cleaning Data
 
 In this section, describe the source of the data, write a basic data dictionary for data you are working with, and discuss any caveats or issues you discovered working with this data. 
+
+The Spotify and YouTube data has 20,718 observations of 28 variables. The main variables we will be working with in this data are number of streams, danceability, valence, key, and views on YouTube. After looking more closely at the data, we believe that we will be able to answer all of the questions we posed in the previous milestone. There were 1,655 songs with NA in at least one of their columns so we removed them from the data set for simplification.
 
 ```{r}
 # Load required data
@@ -50,7 +53,6 @@ Spotify_Youtube_clean <- Spotify_Youtube %>%
   drop_na()
 
 ```
-The Spotify and YouTube data has 20,718 observations of 28 variables. The main variables we will be working with in this data are number of streams, danceability, valence, key, and views on YouTube. There were 1,655 songs with N/A in at least one of their columns, so we have removed them from the data set for simplification. After looking more closely at the data, we believe that we will be able to answer all of the questions we posed in the previous milestone.
 
 ## Questions to Analyze
 In this notebook, we are using data analysis to answer five newsworthy questions.
@@ -58,31 +60,27 @@ In this notebook, we are using data analysis to answer five newsworthy questions
 ### Question 1
 
 * **Question text**: What is the correlation between a song’s “danceability” and its number of streams?
-* **Analysis summary**: In this question we separated songs into 10 danceability intervals and coded the average mean for each interval. Through this code, we found that songs with higher danceability tend to have more streams on average. Songs with a danceability of less than 0.2 have far lower average number of streams while the danceability intervals with the most number of streams are the top 3 intervals.
+* **Analysis summary**: In this question we separated songs into 10 danceability intervals and coded the average mean for each interval. Through this code, we found that songs with higher danceability tend to have more streams on average. Songs with a danceability of less than 0.2 have far lower average number of streams while the danceability intervals with the most number of streams are the top 3 intervals. We also created a scatter plot of songs danceability vs. number of streams with a trendline, while the trendline showed there was a positive relationship between the 2 variables, it did not appear to be significant based on its slope. To confirm this, we ran a correlate test, which showed that the r-value is 0.072, which means there is a very weak positive relationship between the two. Most of the datapoints in the scatterplot were relatively congregated together, and the only two possible "outliers" for consideration in this dataset that we noticed were two songs having more than 3 billion streams, but their danceabilities were about 0.5 and 0.825.
 
 ```{r}
-# Put code to reverse engineer sentence here
-
 Spotify_Youtube_clean_Q1 <- Spotify_Youtube_clean %>%
-  mutate(
-    danceability_interval = case_when(
-      danceability <= 0.1 ~ "0-0.1",
-      danceability <= 0.2 ~ "0.101-0.2",
-      danceability <= 0.3 ~ "0.201-0.3",
-      danceability <= 0.4 ~ "0.301-0.4",
-      danceability <= 0.5 ~ "0.401-0.5",
-      danceability <= 0.6 ~ "0.501-0.6",
-      danceability <= 0.7 ~ "0.601-0.7",
-      danceability <= 0.8 ~ "0.701-0.8",
-      danceability <= 0.9 ~ "0.801-0.9",
-      danceability <= 1 ~ "0.901-1"
-    )
-  ) %>%
+  mutate(stream_in_millions = (stream/1000000)) %>%
+  mutate(danceability_interval = case_when(
+    danceability <= 0.1 ~ "0-0.1",
+    danceability <= 0.2 ~ "0.101-0.2",
+    danceability <= 0.3 ~ "0.201-0.3",
+    danceability <= 0.4 ~ "0.301-0.4",
+    danceability <= 0.5 ~ "0.401-0.5",
+    danceability <= 0.6 ~ "0.501-0.6",
+    danceability <= 0.7 ~ "0.601-0.7",
+    danceability <= 0.8 ~ "0.701-0.8",
+    danceability <= 0.9 ~ "0.801-0.9",
+    danceability <= 1 ~ "0.901-1"
+    )) %>%
   group_by(danceability_interval) %>%
-  summarize(average = mean(stream)) %>%
-  mutate(average_stream_in_millions = average/1000000) %>%
+  summarise(average = mean(stream_in_millions)) %>%
   arrange(desc(average))
-
+  
 Spotify_Youtube_clean_Q1 %>%
   ggplot() +
   geom_bar(aes(x=danceability_interval, weight=average)) +
@@ -91,51 +89,61 @@ Spotify_Youtube_clean_Q1 %>%
     labs(
     title="Songs with higher danceability score tend to have more streams",
     x = "Danceability interval",
-    y = "Average number of streams (in millions)",
+    y = "average number of streams in millions",
     caption = "source: Kaggle"
   )
+
+Spotify_Youtube_clean %>%
+  ggplot() +
+  geom_point(aes(x=danceability,y=stream)) +
+  geom_smooth(aes(x=danceability,y=stream), method="lm")
+
+Spotify_Youtube_clean %>%
+  select(danceability, stream) %>%
+  correlate()
   
+#glimpse(Spotify_Youtube_clean)
 # Display results of code below this codeblock
-  
-View(Spotify_Youtube_clean_Q1)
 
 ```
 
 ### Question 2
 
-* **Question text**: What mood of song gets more streams, happy songs (0.8 valence or higher) or sad songs (0.2 valence or lower)?
-* **Analysis summary**: Songs with a valence of 0.8 or more (happy songs) have an average 144.9 million streams, more than songs with a valence of 0.2 or less, which have an average of 125.3 million streams. However, the valence interval with the lowest average streams is 0.4 to 0.6, songs with a medium valence.
+* **Question text**: What mood of song gets more streams, happy songs (0.8 valence or higher) or sad songs (0.2 valence or lower)? Is there any correlation?
+* **Analysis summary**: We sorted the songs into five valence intervals and then found the average number of streams in millions. We found that songs with the highest and lowest valence intervals have the fewest average streams while the middle interval has the most. After this, we ran a correlation test to see if there is any correlation between valence and number of streams. Our correlation test found that the r-value for valence and streams is -0.011, meaning that there is a very weak negative relationship between the two, but the relationship is so weak that it does not appear to be meaningful. To confirm that, we ran the cor.test to determine the p-value. The p-value is 0.1177, which means it is not statistically significant. 
 
 ```{r}
 # Put code to reverse engineer sentence here
-
 Spotify_Youtube_clean_Q2 <- Spotify_Youtube_clean %>%
   mutate(stream_in_millions = (stream/1000000)) %>%
     mutate(valence_interval = case_when(
     valence <= 0.2 ~ "0-0.2",
     valence <= 0.4 ~ "0.2-0.4",
-    danceability <= 0.6 ~ "0.4-0.6",
-    danceability <= 0.8 ~ "0.6-0.8",
-    danceability <= 1 ~ "0.8-1",
+    valence <= 0.6 ~ "0.4-0.6",
+    valence <= 0.8 ~ "0.6-0.8",
+    valence <= 1 ~ "0.8-1",
     )) %>%
    group_by(valence_interval) %>%
   summarise(average = mean(stream_in_millions)) %>%
   arrange(desc(average))
 
-# Display results of code below this codeblock
+Spotify_Youtube_clean %>%
+  select(valence, stream) %>%
+  correlate()
 
-Spotify_Youtube_clean_Q2
+cor.test(Spotify_Youtube_clean$valence, Spotify_Youtube_clean$stream)
+
+# Display results of code below this codeblock
 
 ```
 
 ### Question 3
 
 * **Question text**: What is the correlation between a song’s key and its valence? Do certain keys register positive emotions while others register negative emotions?
-* **Analysis summary**: There seems to be no apparent relation between a song's key and its valance. Initially, we thought that a natural key would result in a positive emotion being registered whereas an accidental (sharp or flat) would register a negative emotion, but upon graphing the respective data points, we notice that each of the keys were filled for all possible amounts of valence from 0 to 1.
+* **Analysis summary**: At first we thought that there was no apparent relation between a song's key and its valance. Initially, we assumed that a natural key would result in a positive emotion being registered whereas an accidental (sharp or flat) would register a negative emotion, but upon graphing the respective data points, we notice that each of the keys were filled for all possible amounts of valence from 0 to 1. When we ran a correlation test, we found that the r-value for key and valence and streams is 0.045, meaning that there is a very weak positive relationship between the two, and like for valence and streams, the relationship is so weak that it does not appear to be meaningful. We ran the cor.test and found that the p-value was 4.03e-10, indicating that it is statistically significant.
+
 
 ```{r}
-# Put code to reverse engineer sentence here
-
 Spotify_Youtube_clean_Q3 <- Spotify_Youtube_clean %>%
  ggplot() +
    geom_point(aes(x=key, y=valence)) +
@@ -147,36 +155,39 @@ Spotify_Youtube_clean_Q3 <- Spotify_Youtube_clean %>%
     caption = "Source: Kaggle"
   )
 
+Spotify_Youtube_clean %>%
+  select(key, valence) %>%
+  correlate()
+
+cor.test(Spotify_Youtube_clean$key, Spotify_Youtube_clean$valence)
+
 # Display results of code below this codeblock
 
 Spotify_Youtube_clean_Q3
+
 ```
 
 ### Question 4
 
-* **Question text**: What artist has the most songs in the top 100 most streamed songs on Spotify?
-* **Analysis summary**: The artist who has the most songs in the top 100 most streamed songs on Spotify is Post Malone, with five songs: "rockstar (feat. 21 Savage)," "Sunflower - Spider-Man: Into the Spider-Verse," "Circles," "Better Now" and "Congratulations."
+* **Question text**: What artist has the highest average number of streams for songs with over 1 billion streams?
+* **Analysis summary**: The artist with the highest average streams is Post Malone, with an average of 1.525 billion streams for his top 10 songs. He is the only artist with more than 1.5 billion average streams, the next most streamed artist is Ed Sheeran, with nearly 100 million less streams on average. There are 16 artists who average more than 1 billion streams for their top 10 songs.
 
 ```{r}
 # Put code to reverse engineer sentence here
-
-Spotify_Youtube_clean_Q4 <- Spotify_Youtube_clean %>%
-  arrange(desc(stream)) %>%
-  slice(1:100) %>%
+Spotify_Youtube_clean %>%
+  mutate(stream_in_billions = (stream/1000000000)) %>%
   group_by(artist) %>%
-  summarize(total_songs = n()) %>%
-  arrange(desc(total_songs))
+  summarise(average = mean(stream_in_billions)) %>%
+  arrange(desc(average))
 
 # Display results of code below this codeblock
-
-Spotify_Youtube_clean_Q4
 
 ```
 
 ### Question 5
 
-* **Question text**: Which song has the largest difference between Spotify streams and YouTube views (from its official video)?
-* **Analysis summary**: "Despacito" by Luis Fonsi feat. Daddy Yankee has the largest difference between Spotify streams and YouTube views, with the difference being 6,573,051,095 (we used the higher number of views for the song for simplicity's sake), nearly 2 billion more than the difference for the next song on the list: "Wheels on the Bus" by CoComelon. The official video for "Despacito" was once the most viewed YouTube video ever, so it makes sense as to why the difference between streams and views is quite high. Interestingly, "Wheels on the Bus" has a higher ratio of views to streams compared to "Despacito" (58.715:1 vs. 5.363:1 respectively), most likely because parents are playing the song through apps such as YouTube Kids so their children can listen.
+* **Question text**: Which song has the largest difference between Spotify streams and YouTube views from its official video? 
+* **Analysis summary**: "Despacito" by Luis Fonsi feat. Daddy Yankee has the largest difference between Spotify streams and YouTube views, with a difference of more than 6.5 billion, nearly 2 billion more than the difference of the next song, Wheels on the Bus by CoComelon. The official video for "Despacito" was once the most viewed YouTube video ever, so it makes sense as to why the difference in streams and views is so large. The only artist to have two songs in the top 10 largest differences was CoComelon, a children's music YouTube channel. Wheels on the Bus by CoComelon has a higher views-to-stream ratio than Despacito, most likely because parents play the video to entertain their children rather than the song.
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -184,13 +195,18 @@ Spotify_Youtube_clean_Q4
 Spotify_Youtube_clean_Q5 <- Spotify_Youtube_clean %>%
   filter(official_video = TRUE) %>%
   mutate(difference = abs(views - stream)) %>%
+  mutate(views_to_stream_ratio = views/stream) %>%
   arrange(desc(difference)) %>%
-  reframe(artist, track, views, stream, difference)
+  summarize(artist, track, views, stream, difference, views_to_stream_ratio)
 
 # Display results of code below this codeblock
 
-Spotify_Youtube_clean_Q5
+Spotify_Youtube_clean_Q5 
 
 ```
+
+## Concluding Analysis
+
+After finding the answers to the five questions we asked about the data, the most newsworthy finding in our opinion is the songs with the greatest difference between Spotify streams and YouTube video views. The song with the largest difference was "Despacito" by Daddy Yankee and Luis Fonsi, with a difference of 6.5 billion more YouTube views. We think this question has newsworthy findings because it shows the different ways people consume music, whether watching videos on YouTube or paying for a Spotify subscription. In our other questions we determined that there does not appear to be any relationship between a song's danceability or valence and its number of streams.In the third question, we discovered that a song's key and its valence did not have a relationship. We also determined that Post Malone is the artist with the highest average streams for his top 10 songs on Spotify with an average of 1.5 billion streams.
 
 -30-
